@@ -1,0 +1,54 @@
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: mongo-w1
+spec:
+  serviceName: "mongo-w1"
+  replicas: 1
+  selector:
+    matchLabels:
+      role: mongo-w1
+  template:
+    metadata:
+      labels:
+        role: mongo-w1
+        environment: test
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+        - name: mongo
+          image: mongo
+          command:
+          - /bin/sh
+          - -c
+          - >
+            mongod --replSet rs1 --bind_ip 0.0.0.0
+          # lifecycle:
+          #   postStart:
+          #     exec:
+          #       command:
+          #       - /bin/sh
+          #       - -c
+          #       - >
+          #         sleep 6;
+          #         if [ "$HOSTNAME" = "mongo-0" ]; then
+          #           mongo --eval 'rs.initiate();';
+          #           sleep 4;
+          #           mongo --eval 'db = db.getSiblingDB("admin"); db.createUser({ user: "admin", pwd: "superpuper", roles: [{ role: "root", db: "admin" }]});';
+          #         fi;
+          ports:
+            - containerPort: 27017
+          volumeMounts:
+            - name: mongo-key
+              mountPath: "/etc/secrets-volume"
+              readOnly: true
+            - name: mongo-pvc-w1
+              mountPath: /data/db
+      volumes:
+      - name: mongo-key
+        secret:
+          defaultMode: 256
+          secretName: mongo-key
+      - name: mongo-pvc-w1
+        persistentVolumeClaim:
+          claimName: mongo-pvc-w1
