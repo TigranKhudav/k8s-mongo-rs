@@ -5,8 +5,8 @@
 3. ` rs.initiate( {
 ...    _id : "rs1",
 ...    members: [
-...       { _id: 0, host: "10.10.10.60:27017" },
-...       { _id: 1, host: "10.10.10.86:27017" },
-...       { _id: 2, host: "10.10.10.87:27017" },
+...       { _id: 0, host: "mongo-0.default.svc.cluster.local:27017" },
+...       { _id: 1, host: "mongo-w1.default.svc.cluster.local:27017" },
+...       { _id: 2, host: "mongo-w2.default.svc.cluster.local:27017" },
 ...    ]
 ... }) `
